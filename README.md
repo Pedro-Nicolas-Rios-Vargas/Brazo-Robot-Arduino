@@ -1,3 +1,3 @@
-**Brazo Robot Arduino Project
+Brazo Robot Arduino Project
 
 Tacos de asada
