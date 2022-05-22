@@ -7,7 +7,7 @@
 #define SER7 7 //Pin para el servo
 #define SER8 8 //Pin para el servo
 
-//SoftwareSerial serialESP32(9, 10); // RX, TX
+SoftwareSerial serialESP32(9, 10); // RX, TX
 String readString;
  
 Servo servo3; //Objeto servo
@@ -22,47 +22,58 @@ int servo3PPos, servo4PPos, servo5PPos, servo6PPos, servo7PPos, servo8PPos; // p
 int p3 = 0, p4 = 0, p5 = 0, p6 = 0, p7 = 0, p8 = 0;
 void setup()
 {
-   //Inicializamos el servo y el Serial:
-   servo3.attach(SER3);
-   servo4.attach(SER4);
-   servo5.attach(SER5);
-   servo6.attach(SER6);
-   servo7.attach(SER7);
-   servo8.attach(SER8);
-   servo3PPos = 90;
-   servo4PPos = 40;
-   servo5PPos = 30;
-   servo6PPos = 90;
-   servo7PPos = 115;
-   servo8PPos = 30;
-   servo3.write(servo3PPos);
-   servo4.write(servo4PPos);
-   servo5.write(servo5PPos);
-   servo6.write(servo6PPos);
-   servo7.write(servo7PPos);
-   servo8.write(servo8PPos);
-   Serial.begin(9600);
-   //Serial.begin(115200); // Antes era 9600
-   //while(!Serial) {
-    // // Espera a establecer la conexión con el serial.
-   //
+    //Inicializamos el servo y el Serial:
+    servo3.attach(SER3);
+    servo4.attach(SER4);
+    servo5.attach(SER5);
+    servo6.attach(SER6);
+    servo7.attach(SER7);
+    servo8.attach(SER8);
+    servo3PPos = 90;
+    servo4PPos = 40;
+    servo5PPos = 30;
+    servo6PPos = 90;
+    servo7PPos = 115;
+    servo8PPos = 30;
+    servo3.write(servo3PPos);
+    servo4.write(servo4PPos);
+    servo5.write(servo5PPos);
+    servo6.write(servo6PPos);
+    servo7.write(servo7PPos);
+    servo8.write(servo8PPos);
+    Serial.begin(9600);
+    Serial.begin(115200); // Antes era 9600
+    while(!Serial) {
+       ; // Espera a establecer la conexión con el serial.
+    }
 
-   //serialESP32.begin(115200);
-   
-   delay(20);
+    serialESP32.begin(115200);
+
+    delay(20);
+}
+
+String readSerials() {
+    int esp32AvailableBytes = serialESP32.available();
+    int serialAvailableBytes = Serial.available();
+    String cad;
+
+    if (serialAvailableBytes > 0) {
+        cad = Serial.readString();
+    } else if (esp32AvailableBytes > 0) {
+        cad = serialESP32.readString();
+    } else {
+        cad = "";
+    }
+
+    return cad;
 }
   
 void loop()
 {
-   /*if (serialESP32.available()) {
-    delay(3);
-    char c = serialESP32.read();
-    readString += c;
-   }
-   */
-   if (Serial.available() > 0)
-   {
-    String cad = Serial.readString(); 
+   //if (Serial.available() > 0)
+   //{
+    String cad = readSerials();
+    //String cad = Serial.readString(); 
     int pos = cad.indexOf(',');
     int cad1= (cad.substring(0,pos)).toInt();
     int cad2= (cad.substring(pos+1)).toInt();
@@ -160,5 +171,5 @@ void loop()
      //mssg = Serial.parseInt(); //Leemos el serial
      //servo.write(mssg); //Movemos el servo
      //delay(50);
-   }
+   //}
 }
